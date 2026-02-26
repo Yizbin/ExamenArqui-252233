@@ -67,7 +67,7 @@ public class PantallaTicket extends JFrame implements ISuscriptor {
         add(panelSur, BorderLayout.SOUTH);
     }
 
-    public void mostrarTicket() {
+    private void mostrarTicket() {
         panelContenido.removeAll();
         List<DetalleCompra> seleccionados = modeloVista.getProductosSeleccionados();
         Tarjeta tarjeta = modeloVista.getDatosTarjeta();
