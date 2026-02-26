@@ -2,8 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
-
 package Main;
+
+import MVC_ComprarProducto.Controlador;
+import MVC_ComprarProducto.ModeloCompra;
+import MVC_ComprarProducto.PantallaCarrito;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -15,7 +19,20 @@ public class Ensamblador {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        ModeloCompra modelo = new ModeloCompra();
+
+        Controlador controlador = new Controlador(modelo);
+
+        PantallaCarrito pantallaCarrito = new PantallaCarrito(controlador, modelo);
+
+        modelo.agregarSuscriptor(pantallaCarrito);
+
+        pantallaCarrito.update();
+
+        SwingUtilities.invokeLater(() -> {
+            pantallaCarrito.setLocationRelativeTo(null); 
+            pantallaCarrito.setVisible(true);
+        });
     }
 
 }
