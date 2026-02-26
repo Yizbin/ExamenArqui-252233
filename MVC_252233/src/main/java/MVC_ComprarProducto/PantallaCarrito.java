@@ -287,10 +287,8 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
 
         if (error != null) {
             mostrarMensaje("Error", error, JOptionPane.ERROR_MESSAGE);
-            ((ModeloCompra) modeloVista).limpiarMensajes();
         } else if (exito != null) {
             mostrarMensaje("Éxito", exito, JOptionPane.INFORMATION_MESSAGE);
-            ((ModeloCompra) modeloVista).limpiarMensajes();
         }
     }
 }

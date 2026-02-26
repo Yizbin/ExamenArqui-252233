@@ -34,4 +34,14 @@ public class Tarjeta {
     public String getCiudad() {
         return ciudad;
     }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public String getBancoEmisor() {
+        return bancoEmisor;
+    }
+    
+    
 }

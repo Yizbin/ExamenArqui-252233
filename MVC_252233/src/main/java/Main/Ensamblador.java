@@ -7,6 +7,7 @@ package Main;
 import MVC_ComprarProducto.Controlador;
 import MVC_ComprarProducto.ModeloCompra;
 import MVC_ComprarProducto.PantallaCarrito;
+import MVC_ComprarProducto.PantallaTicket;
 import javax.swing.SwingUtilities;
 
 /**
@@ -20,19 +21,20 @@ public class Ensamblador {
      */
     public static void main(String[] args) {
         ModeloCompra modelo = new ModeloCompra();
-
         Controlador controlador = new Controlador(modelo);
 
         PantallaCarrito pantallaCarrito = new PantallaCarrito(controlador, modelo);
+        PantallaTicket pantallaTicket = new PantallaTicket(controlador, modelo);
 
         modelo.agregarSuscriptor(pantallaCarrito);
+        modelo.agregarSuscriptor(pantallaTicket);
 
         pantallaCarrito.update();
 
         SwingUtilities.invokeLater(() -> {
-            pantallaCarrito.setLocationRelativeTo(null); 
+            pantallaCarrito.setLocationRelativeTo(null);
             pantallaCarrito.setVisible(true);
         });
-    }
 
+    }
 }

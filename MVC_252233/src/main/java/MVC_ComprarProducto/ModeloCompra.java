@@ -42,7 +42,6 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
         for (DetalleCompra detalle : productosSeleccionados) {
             this.total += detalle.getSubtotal();
         }
-        notificarSuscriptores();
     }
 
     public void agregarSuscriptor(ISuscriptor suscriptor) {
@@ -53,6 +52,7 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
         for (ISuscriptor suscriptor : listaSuscriptores) {
             suscriptor.update();
         }
+        limpiarMensajes();
     }
 
     @Override
