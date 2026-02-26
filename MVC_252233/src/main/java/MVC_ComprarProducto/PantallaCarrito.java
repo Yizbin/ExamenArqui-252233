@@ -4,14 +4,15 @@
  */
 package MVC_ComprarProducto;
 
-import Mock.DetalleCompra;
-import Mock.Producto;
+import Entidades.DetalleCompra;
+import Entidades.Producto;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Insets;
 import java.util.List;
 import javax.swing.*;
 
@@ -24,7 +25,6 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
     private final Controlador controlador;
     private final IModeloVista modeloVista;
 
-    // Componentes de la interfaz
     private JPanel panelProductos;
     private JPanel panelResumen;
     private JLabel lblTotal;
@@ -167,7 +167,7 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
         panelResumen.removeAll();
         List<DetalleCompra> seleccionados = modeloVista.getProductosSeleccionados();
 
-        if (seleccionados != null) {
+        if (seleccionados != null && !seleccionados.isEmpty()) {
             for (DetalleCompra detalle : seleccionados) {
                 JPanel fila = new JPanel(new BorderLayout());
                 fila.setBackground(Color.WHITE);
@@ -179,14 +179,30 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
                         detalle.getCantidad());
                 JLabel lblProducto = new JLabel(textoIzq);
 
+                JPanel panelDerecho = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+                panelDerecho.setBackground(Color.WHITE);
+
                 JLabel lblSubtotal = new JLabel(String.format("Subtotal: $%.2f", detalle.getSubtotal()));
                 lblSubtotal.setFont(new Font("Arial", Font.BOLD, 12));
 
+                JButton btnEliminar = new JButton("X");
+                btnEliminar.setFont(new Font("Arial", Font.BOLD, 10));
+                btnEliminar.setForeground(Color.RED);
+                btnEliminar.setMargin(new Insets(2, 5, 2, 5));
+                btnEliminar.addActionListener(e -> clickEliminarProducto(detalle.getProducto().getId()));
+
+                panelDerecho.add(lblSubtotal);
+                panelDerecho.add(btnEliminar);
+
                 fila.add(lblProducto, BorderLayout.WEST);
-                fila.add(lblSubtotal, BorderLayout.EAST);
+                fila.add(panelDerecho, BorderLayout.EAST);
 
                 panelResumen.add(fila);
             }
+        } else {
+            JLabel lblVacio = new JLabel("El carrito esta vacio");
+            lblVacio.setForeground(Color.GRAY);
+            panelResumen.add(lblVacio);
         }
 
         lblTotal.setText(String.format("Total acumulado: $%.2f", modeloVista.getTotal()));
@@ -195,23 +211,15 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
     }
 
     public boolean ingresarTarjeta() {
-        String numTarjeta = pedirTexto("Ingresar Pago", "Por favor, ingrese su numero de tarjeta (Minimo 16 digitos):");
+        String numTarjeta = pedirTexto("Ingresar Pago", "Por favor, ingrese su numero de tarjeta:");
 
         if (numTarjeta == null) {
             return false;
         }
 
-        if (!numTarjeta.trim().isEmpty()) {
-            try {
-                controlador.ingresarTarjeta(numTarjeta);
-                return true;
-            } catch (Exception e) {
-                mostrarMensaje("Tarjeta Invalida", e.getMessage(), JOptionPane.ERROR_MESSAGE);
-                return false;
-            }
-        }
+        controlador.ingresarTarjeta(numTarjeta);
 
-        return false;
+        return true;
     }
 
     public void clickAgregarProducto(int idProducto, int cantidad) {
@@ -221,23 +229,27 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
             mostrarMensaje("Error al agregar", e.getMessage(), JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    public void clickEliminarProducto(int idProducto) {
+        controlador.eliminarProducto(idProducto); 
+    }
 
     public void clickPagar() {
-        try {
-            if (modeloVista.getProductosSeleccionados().isEmpty()) {
-                mostrarMensaje("Carrito vacio", "Agrega productos antes de pagar.", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+        if (modeloVista.getProductosSeleccionados().isEmpty()) {
+            mostrarMensaje("Carrito vacio", "Agrega productos antes de pagar.", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-            boolean tarjetaRegistrada = ingresarTarjeta();
+        String numTarjeta = pedirTexto("Ingresar Pago", "Por favor, ingrese su numero de tarjeta:");
 
-            if (tarjetaRegistrada) {
-                controlador.pagar();
-                mostrarMensaje("Estado de la compra", modeloVista.getMensajeEstado(), JOptionPane.INFORMATION_MESSAGE);
-            }
+        if (numTarjeta == null) {
+            return;
+        }
 
-        } catch (Exception e) {
-            mostrarMensaje("Error en el pago", e.getMessage(), JOptionPane.ERROR_MESSAGE);
+        controlador.ingresarTarjeta(numTarjeta);
+
+        if (modeloVista.getDatosTarjeta() != null) {
+            controlador.pagar();
         }
     }
 
@@ -269,6 +281,16 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
     public void update() {
         mostrarProductos();
         mostrarSeleccionados();
-    }
 
+        String error = modeloVista.getErrorEstado();
+        String exito = modeloVista.getMensajeEstado();
+
+        if (error != null) {
+            mostrarMensaje("Error", error, JOptionPane.ERROR_MESSAGE);
+            ((ModeloCompra) modeloVista).limpiarMensajes();
+        } else if (exito != null) {
+            mostrarMensaje("Éxito", exito, JOptionPane.INFORMATION_MESSAGE);
+            ((ModeloCompra) modeloVista).limpiarMensajes();
+        }
+    }
 }

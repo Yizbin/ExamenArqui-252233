@@ -4,9 +4,9 @@
  */
 package MVC_ComprarProducto;
 
-import Mock.DetalleCompra;
-import Mock.Producto;
-import Mock.Tarjeta;
+import Entidades.DetalleCompra;
+import Entidades.Producto;
+import Entidades.Tarjeta;
 import java.util.List;
 
 /**
@@ -24,4 +24,8 @@ public interface IModeloVista {
     public Tarjeta getDatosTarjeta();
 
     public String getMensajeEstado();
+
+    public String getErrorEstado();
+
+    public void limpiarMensajes();
 }

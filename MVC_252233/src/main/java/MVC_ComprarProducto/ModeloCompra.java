@@ -4,12 +4,11 @@
  */
 package MVC_ComprarProducto;
 
-import Mock.DetalleCompra;
-import Mock.GeneradorMock;
-import Mock.Producto;
-import Mock.Tarjeta;
+import Entidades.DetalleCompra;
+import Entidades.GeneradorMock;
+import Entidades.Producto;
+import Entidades.Tarjeta;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,6 +22,7 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
     private Tarjeta tarjetaActual;
     private double total;
     private String mensajeEstado;
+    private String errorEstado;
     private final List<ISuscriptor> listaSuscriptores;
 
     public ModeloCompra() {
@@ -56,61 +56,98 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
     }
 
     @Override
-    public void agregarProducto(int idProducto, int cantidad) throws Exception {
-        Producto productoEncontrado = null;
-        for (Producto p : productosDisponibles) {
-            if (p.getId() == idProducto) {
-                productoEncontrado = p;
-                break;
+    public void agregarProducto(int idProducto, int cantidad) {
+        try {
+            Producto productoEncontrado = buscarProductoPorId(idProducto);
+            if (productoEncontrado == null) {
+                throw new Exception("Producto no encontrado.");
             }
+
+            DetalleCompra nuevoDetalle = new DetalleCompra(productoEncontrado, cantidad);
+            nuevoDetalle.validar();
+
+            productosSeleccionados.add(nuevoDetalle);
+            calcularTotal();
+
+            this.errorEstado = null;
+            this.mensajeEstado = "Producto agregado: " + productoEncontrado.getNombre();
+
+        } catch (Exception e) {
+            this.errorEstado = e.getMessage();
+            this.mensajeEstado = null;
         }
 
-        if (productoEncontrado == null) {
-            throw new Exception("El producto seleccionado no existe en el catálogo.");
-        }
-
-        DetalleCompra nuevoDetalle = new DetalleCompra(productoEncontrado, cantidad);
-        nuevoDetalle.validar();
-
-        productosSeleccionados.add(nuevoDetalle);
-        calcularTotal();
-        this.mensajeEstado = "Producto agregado correctamente.";
         notificarSuscriptores();
     }
 
     @Override
-    public void registrarTarjeta(String numero) throws Exception {
-        String numeroLimpio = numero.replace("-", "").replace(" ", "");
+    public void registrarTarjeta(String numero) {
+        try {
+            String numLimpio = numero.replace("-", "").replace(" ", "");
 
-        List<String> tarjetasValidas = Arrays.asList(
-                "1234567890123456",
-                "4152313456789012"
-        );
+            Tarjeta nuevaTarjeta = new Tarjeta(numLimpio, "Banamex", "Ciudad Obregón");
+            nuevaTarjeta.validar();
 
-        if (!tarjetasValidas.contains(numeroLimpio)) {
-            throw new Exception("La tarjeta ingresada no existe o fue declinada por el banco.");
+            java.util.List<String> tarjetasValidas = java.util.Arrays.asList("1234567890123456", "4152313456789012");
+            if (!tarjetasValidas.contains(numLimpio)) {
+                throw new Exception("Tarjeta declinada o inexistente en el sistema.");
+            }
+
+            this.tarjetaActual = nuevaTarjeta;
+            this.errorEstado = null;
+            this.mensajeEstado = "Tarjeta registrada correctamente.";
+
+        } catch (Exception e) {
+            this.tarjetaActual = null;
+            this.errorEstado = e.getMessage();
+            this.mensajeEstado = null;
         }
 
-        Tarjeta nuevaTarjeta = new Tarjeta(numeroLimpio, "Banamex", "Ciudad Obregon");
-
-        nuevaTarjeta.validar();
-
-        this.tarjetaActual = nuevaTarjeta;
-        this.mensajeEstado = "Tarjeta registrada y verificada correctamente.";
         notificarSuscriptores();
     }
 
     @Override
-    public void procesarPago() throws Exception {
+    public void procesarPago() {
         if (productosSeleccionados.isEmpty()) {
-            throw new Exception("El carrito esta vacio. Agrega productos para comprar.");
+            this.errorEstado = "El carrito está vacío. Agrega productos para pagar.";
+            this.mensajeEstado = null;
+        } else if (tarjetaActual == null) {
+            this.errorEstado = "Debes registrar una tarjeta válida antes de pagar.";
+            this.mensajeEstado = null;
+        } else {
+            this.mensajeEstado = "¡Pago procesado con éxito por un total de $" + this.total + "!";
+            this.errorEstado = null;
         }
-        if (tarjetaActual == null) {
-            throw new Exception("Debes registrar una tarjeta valida antes de pagar.");
-        }
-        tarjetaActual.validar();
 
-        this.mensajeEstado = "Pago procesado con exito por un total de $" + this.total;
+        notificarSuscriptores();
+    }
+
+    @Override
+    public void eliminarProducto(int idProducto) {
+        try {
+            DetalleCompra detalleAEliminar = null;
+            for (DetalleCompra detalle : productosSeleccionados) {
+                if (detalle.getProducto().getId() == idProducto) {
+                    detalleAEliminar = detalle;
+                    break;
+                }
+            }
+
+            if (detalleAEliminar != null) {
+                productosSeleccionados.remove(detalleAEliminar);
+                calcularTotal();
+
+                this.errorEstado = null;
+                this.mensajeEstado = "Producto eliminado del carrito.";
+            } else {
+                throw new Exception("El producto no se encontro en el carrito.");
+            }
+
+        } catch (Exception e) {
+            this.errorEstado = e.getMessage();
+            this.mensajeEstado = null;
+        }
+
         notificarSuscriptores();
     }
 
@@ -137,6 +174,26 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
     @Override
     public String getMensajeEstado() {
         return mensajeEstado;
+    }
+
+    @Override
+    public String getErrorEstado() {
+        return errorEstado;
+    }
+
+    @Override
+    public void limpiarMensajes() {
+        this.errorEstado = null;
+        this.mensajeEstado = null;
+    }
+
+    private Producto buscarProductoPorId(int idProducto) throws Exception {
+        for (Producto p : productosDisponibles) {
+            if (p.getId() == idProducto) {
+                return p;
+            }
+        }
+        throw new Exception("El producto seleccionado no existe en el catálogo.");
     }
 
 }

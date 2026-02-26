@@ -16,30 +16,19 @@ public class Controlador {
         this.modelo = modelo;
     }
 
-    public void seleccionarProducto(int idProducto, int cantidad) throws Exception {
-        try {
-            modelo.agregarProducto(idProducto, cantidad);
-        } catch (Exception e) {
-            System.err.println("Controlador [Log]: Error al agregar producto - " + e.getMessage());
-            throw e;
-        }
+    public void seleccionarProducto(int idProducto, int cantidad) {
+        modelo.agregarProducto(idProducto, cantidad);
     }
 
-    public void ingresarTarjeta(String numero) throws Exception {
-        try {
-            modelo.registrarTarjeta(numero);
-        } catch (Exception e) {
-            System.err.println("Controlador [Log]: Error al registrar tarjeta - " + e.getMessage());
-            throw e;
-        }
+    public void ingresarTarjeta(String numero) {
+        modelo.registrarTarjeta(numero);
     }
 
-    public void pagar() throws Exception {
-        try {
-            modelo.procesarPago();
-        } catch (Exception e) {
-            System.err.println("Controlador [Log]: Error al procesar pago - " + e.getMessage());
-            throw e;
-        }
+    public void pagar() {
+        modelo.procesarPago();
+    }
+
+    public void eliminarProducto(int idProducto) {
+        modelo.eliminarProducto(idProducto);
     }
 }
