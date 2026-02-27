@@ -138,6 +138,20 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
 
         notificarSuscriptores();
     }
+    
+    @Override
+    public void nofiticarError(String mensaje) {
+       for (ISuscriptor suscriptor : listaSuscriptores) {
+            suscriptor.notificarError(mensaje);
+        }
+    }
+
+    @Override
+    public void notificarExito(String titulo, String mensaje) {
+        for (ISuscriptor suscriptor : listaSuscriptores) {
+            suscriptor.notificarExito(titulo, mensaje);
+        }
+    }
 
     private Producto buscarProductoPorId(int idProducto) throws Exception {
         for (Producto p : productosDisponibles) {
@@ -147,5 +161,7 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
         }
         throw new Exception("El producto seleccionado no existe en el catálogo.");
     }
+
+    
 
 }

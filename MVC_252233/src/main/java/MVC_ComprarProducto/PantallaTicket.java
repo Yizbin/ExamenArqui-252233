@@ -31,19 +31,16 @@ public class PantallaTicket extends JFrame implements ISuscriptorPago {
     private void configurarUI() {
         setTitle("Recibo de Compra");
         setSize(400, 500);
-        setLocationRelativeTo(null); // Centra la ventana en la pantalla
-        // IMPORTANTE: HIDE_ON_CLOSE para que al cerrar el ticket no se cierre toda la app
+        setLocationRelativeTo(null); 
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLayout(new BorderLayout());
         getContentPane().setBackground(Color.WHITE);
 
-        // Título superior
         JLabel lblTitulo = new JLabel("TICKET DE PAGO", SwingConstants.CENTER);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
         lblTitulo.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
         add(lblTitulo, BorderLayout.NORTH);
 
-        // Contenedor principal estilo "lista"
         panelContenido = new JPanel();
         panelContenido.setLayout(new BoxLayout(panelContenido, BoxLayout.Y_AXIS));
         panelContenido.setBackground(Color.WHITE);
@@ -52,7 +49,6 @@ public class PantallaTicket extends JFrame implements ISuscriptorPago {
         scroll.setBorder(null);
         add(scroll, BorderLayout.CENTER);
 
-        // Botón inferior para cerrar
         JButton btnCerrar = new JButton("Cerrar Ticket");
         btnCerrar.setFont(new Font("Arial", Font.BOLD, 12));
         btnCerrar.addActionListener(e -> setVisible(false));
@@ -73,10 +69,9 @@ public class PantallaTicket extends JFrame implements ISuscriptorPago {
             return;
         }
 
-        // 1. Mensaje de Éxito y Datos de Tarjeta
         JLabel lblExito = new JLabel("¡Pago Aprobado!");
         lblExito.setFont(new Font("Arial", Font.BOLD, 16));
-        lblExito.setForeground(new Color(0, 153, 51)); // Verde oscuro
+        lblExito.setForeground(new Color(0, 153, 51));
 
         JPanel panelInfo = new JPanel(new GridLayout(3, 1));
         panelInfo.setBackground(Color.WHITE);
@@ -86,7 +81,6 @@ public class PantallaTicket extends JFrame implements ISuscriptorPago {
         ));
         panelInfo.add(lblExito);
 
-        // Extraemos los últimos 4 dígitos de la tarjeta de forma segura
         String numTarjeta = tarjeta.getNumero();
         String terminacion = numTarjeta.length() >= 4 ? numTarjeta.substring(numTarjeta.length() - 4) : numTarjeta;
 
@@ -97,7 +91,6 @@ public class PantallaTicket extends JFrame implements ISuscriptorPago {
         panelContenido.add(panelInfo);
         panelContenido.add(Box.createVerticalStrut(10));
 
-        // 2. Desglose de productos (Igual a tu Resumen)
         for (DetalleCompra detalle : seleccionados) {
             JPanel fila = new JPanel(new BorderLayout());
             fila.setBackground(Color.WHITE);
@@ -109,7 +102,6 @@ public class PantallaTicket extends JFrame implements ISuscriptorPago {
             panelContenido.add(fila);
         }
 
-        // 3. Total Final
         JPanel panelTotal = new JPanel(new BorderLayout());
         panelTotal.setBackground(Color.WHITE);
         panelTotal.setBorder(BorderFactory.createCompoundBorder(

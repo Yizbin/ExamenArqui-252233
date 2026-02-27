@@ -103,7 +103,6 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
                 btnAgregar.addActionListener(e -> clickAgregarProducto(p.getId(), 1));
                 topPanel.add(btnAgregar);
 
-                // Asignar ruta de imagen según el ID del producto
                 String rutaImagen = "";
                 switch (p.getId()) {
                     case 1:
@@ -212,32 +211,17 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
     }
 
     public void clickAgregarProducto(int idProducto, int cantidad) {
-        try {
-            controlador.seleccionarProducto(idProducto, cantidad);
-            mostrarMensaje("Añadido", "Producto agregado al carrito", JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception e) {
-            mostrarMensaje("Error al agregar", e.getMessage(), JOptionPane.ERROR_MESSAGE);
-        }
+        controlador.seleccionarProducto(idProducto, cantidad);
     }
 
     public void clickEliminarProducto(int idProducto) {
-        try {
-            controlador.eliminarProducto(idProducto);
-        } catch (Exception e) {
-            mostrarMensaje("Error", e.getMessage(), JOptionPane.ERROR_MESSAGE);
-        }
+        controlador.eliminarProducto(idProducto);
     }
 
     public void clickPagar() {
         String numTarjeta = pedirTexto("Ingresar Pago", "Por favor, ingrese su numero de tarjeta:");
-
         if (numTarjeta != null && !numTarjeta.trim().isEmpty()) {
-            try {
-                controlador.procesarCompra(numTarjeta);
-                mostrarMensaje("Éxito", "¡Pago procesado con éxito!", JOptionPane.INFORMATION_MESSAGE);
-            } catch (Exception e) {
-                mostrarMensaje("Error en el pago", e.getMessage(), JOptionPane.ERROR_MESSAGE);
-            }
+            controlador.procesarCompra(numTarjeta);
         }
     }
 
@@ -273,6 +257,16 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
         boolean tieneProductos = !modeloVista.getProductosSeleccionados().isEmpty();
         btnPagar.setEnabled(tieneProductos);
 
+    }
+
+    @Override
+    public void notificarError(String mensaje) {
+        mostrarMensaje("Error", mensaje, JOptionPane.ERROR_MESSAGE);
+    }
+
+    @Override
+    public void notificarExito(String titulo, String mensaje) {
+        mostrarMensaje(titulo, mensaje, JOptionPane.INFORMATION_MESSAGE);
     }
 
 }

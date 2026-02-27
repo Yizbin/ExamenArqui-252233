@@ -16,15 +16,29 @@ public class Controlador {
         this.modelo = modelo;
     }
 
-    public void seleccionarProducto(int idProducto, int cantidad) throws Exception {
-        modelo.agregarProducto(idProducto, cantidad);
+    public void seleccionarProducto(int idProducto, int cantidad) {
+        try {
+            modelo.agregarProducto(idProducto, cantidad);
+            modelo.notificarExito("Añadido", "Producto agregado al carrito");
+        } catch (Exception ex) {
+            modelo.nofiticarError(ex.getMessage());
+        }
     }
 
-    public void procesarCompra(String numeroTarjeta) throws Exception {
-        modelo.procesarCompraCompleta(numeroTarjeta);
+    public void procesarCompra(String numeroTarjeta) {
+       try {
+            modelo.procesarCompraCompleta(numeroTarjeta);
+            modelo.notificarExito("Éxito", "¡Pago procesado con éxito!");
+        } catch (Exception ex) {
+            modelo.nofiticarError(ex.getMessage());
+        }
     }
 
-    public void eliminarProducto(int idProducto) throws Exception {
-        modelo.eliminarProducto(idProducto);
+    public void eliminarProducto(int idProducto) {
+        try {
+            modelo.eliminarProducto(idProducto);
+        } catch (Exception ex) {
+            modelo.nofiticarError(ex.getMessage());
+        }
     }
 }

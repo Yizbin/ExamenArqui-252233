@@ -12,4 +12,7 @@ package MVC_ComprarProducto;
 public interface ISuscriptor {
 
     public void update();
+    
+    public void notificarError(String mensaje);
+    public void notificarExito(String titulo, String mensaje);
 }
