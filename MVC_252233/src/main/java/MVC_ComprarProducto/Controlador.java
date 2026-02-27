@@ -24,10 +24,6 @@ public class Controlador {
         modelo.procesarCompraCompleta(numeroTarjeta);
     }
 
-    public void pagar() {
-        modelo.procesarPago();
-    }
-
     public void eliminarProducto(int idProducto) throws Exception {
         modelo.eliminarProducto(idProducto);
     }

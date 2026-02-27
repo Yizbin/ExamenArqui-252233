@@ -14,7 +14,5 @@ public interface IControlModelo {
 
     public void procesarCompraCompleta(String numeroTarjeta) throws Exception;
 
-    public void procesarPago();
-
     public void eliminarProducto(int idProducto) throws Exception;
 }

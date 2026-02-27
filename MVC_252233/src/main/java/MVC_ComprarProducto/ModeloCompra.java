@@ -21,8 +21,6 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
     private final List<DetalleCompra> productosSeleccionados;
     private Tarjeta tarjetaActual;
     private double total;
-    private String mensajeEstado;
-    private String errorEstado;
     private final List<ISuscriptor> listaSuscriptores;
     private final List<ISuscriptorPago> listaSuscriptoresPago;
 
@@ -69,22 +67,6 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
 
         productosSeleccionados.add(nuevoDetalle);
         calcularTotal();
-
-        notificarSuscriptores();
-    }
-
-    @Override
-    public void procesarPago() {
-        if (productosSeleccionados.isEmpty()) {
-            this.errorEstado = "El carrito está vacío. Agrega productos para pagar.";
-            this.mensajeEstado = null;
-        } else if (tarjetaActual == null) {
-            this.errorEstado = "Debes registrar una tarjeta válida antes de pagar.";
-            this.mensajeEstado = null;
-        } else {
-            this.mensajeEstado = "¡Pago procesado con éxito por un total de $" + this.total + "!";
-            this.errorEstado = null;
-        }
 
         notificarSuscriptores();
     }
@@ -137,7 +119,7 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
 
         String numLimpio = numeroTarjeta.replace("-", "").replace(" ", "");
 
-        Tarjeta nuevaTarjeta = new Tarjeta(numLimpio, "Banamex", "Ciudad Obregón");
+        Tarjeta nuevaTarjeta = new Tarjeta(numLimpio, "Banamex", "Ciudad Obregon");
         nuevaTarjeta.validar();
 
         java.util.List<String> tarjetasValidas = java.util.Arrays.asList("1234567890123456", "4152313456789012");
@@ -147,11 +129,14 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
 
         this.tarjetaActual = nuevaTarjeta;
 
-        notificarSuscriptores();
-
         for (ISuscriptorPago suscriptor : listaSuscriptoresPago) {
             suscriptor.compraExitosa();
         }
+
+        this.productosSeleccionados.clear();
+        this.total = 0.0;
+
+        notificarSuscriptores();
     }
 
     private Producto buscarProductoPorId(int idProducto) throws Exception {
