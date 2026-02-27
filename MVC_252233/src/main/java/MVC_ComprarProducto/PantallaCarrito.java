@@ -12,6 +12,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Insets;
 import java.util.List;
 import javax.swing.*;
@@ -103,30 +104,10 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
                 btnAgregar.addActionListener(e -> clickAgregarProducto(p.getId(), 1));
                 topPanel.add(btnAgregar);
 
-                String rutaImagen = "";
-                switch (p.getId()) {
-                    case 1:
-                        rutaImagen = "img/Shampoo.png";
-                        break;
-                    case 2:
-                        rutaImagen = "img/Cepillo.jpg";
-                        break;
-                    case 3:
-                        rutaImagen = "img/Ps5.png";
-                        break;
-                    case 4:
-                        rutaImagen = "img/Rtx.png";
-                        break;
-                    case 5:
-                        rutaImagen = "img/Doritos.jpg";
-                        break;
-                    default:
-                        rutaImagen = "img/default.png";
-                        break;
-                }
+                String rutaImagen = p.getRutaImagen();
+                ImageIcon icono = obtenerImagenEscalada(rutaImagen, 160, 100);
 
                 JLabel lblImagen = new JLabel("", SwingConstants.CENTER);
-                ImageIcon icono = obtenerImagenEscalada(rutaImagen, 160, 100);
 
                 if (icono != null) {
                     lblImagen.setIcon(icono);
@@ -230,7 +211,7 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
             ImageIcon iconoOriginal = new ImageIcon(ruta);
 
             if (iconoOriginal.getIconWidth() > 0) {
-                java.awt.Image imgEscalada = iconoOriginal.getImage().getScaledInstance(ancho, alto, java.awt.Image.SCALE_SMOOTH);
+                java.awt.Image imgEscalada = iconoOriginal.getImage().getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
                 return new ImageIcon(imgEscalada);
             } else {
                 System.err.println("No se encontro la imagen en: " + ruta);

@@ -13,11 +13,13 @@ public class Producto {
     private final int id;
     private final String nombre;
     private final double costo;
+    private final String rutaImagen;
 
-    public Producto(int id, String nombre, double costo) {
+    public Producto(int id, String nombre, double costo, String rutaImagen) {
         this.id = id;
         this.nombre = nombre;
         this.costo = costo;
+        this.rutaImagen = rutaImagen;
     }
 
     public void validar() throws Exception {
@@ -39,6 +41,10 @@ public class Producto {
 
     public int getId() {
         return id;
+    }
+
+    public String getRutaImagen() {
+        return rutaImagen;
     }
 
 }

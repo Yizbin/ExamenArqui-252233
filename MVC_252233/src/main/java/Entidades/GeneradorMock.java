@@ -16,11 +16,11 @@ public class GeneradorMock {
     public static List<Producto> obtenerProductosDisponibles() {
         List<Producto> productos = new ArrayList<>();
 
-        productos.add(new Producto(1, "Shampoo", 20.00));
-        productos.add(new Producto(2, "Cepillo", 35.00));
-        productos.add(new Producto(3, "Ps5", 8500));
-        productos.add(new Producto(4, "RTX 5090", 1500.00));
-        productos.add(new Producto(5, "Doritos 43g", 25.00));
+        productos.add(new Producto(1, "Shampoo Sedal", 45.50, "img/Shampoo.png"));
+        productos.add(new Producto(2, "Cepillo Dental", 25.00, "img/Cepillo.jpg"));
+        productos.add(new Producto(3, "Consola PS5", 9500.00, "img/Ps5.png"));
+        productos.add(new Producto(4, "Tarjeta Grafica RTX 4090", 35000.00, "img/Rtx.png"));
+        productos.add(new Producto(5, "Doritos Nacho", 18.50, "img/Doritos.jpg"));
 
         return productos;
     }
@@ -29,23 +29,4 @@ public class GeneradorMock {
         return new Tarjeta("4152-3134-5678-9012", "Banamex", "Ciudad Obregon");
     }
 
-    public static Compra obtenerCompraPrueba() {
-        Compra compra = new Compra();
-
-        try {
-            Producto p1 = new Producto(1, "Producto A", 20.00);
-            Producto p2 = new Producto(2, "Producto B", 35.00);
-
-            compra.agregarDetalle(new DetalleCompra(p1, 2));
-            compra.agregarDetalle(new DetalleCompra(p2, 1));
-
-            compra.calcularTotal(); 
-            compra.confirmar();
-            
-        } catch (Exception e) {
-            System.err.println("Error al generar la compra mock: " + e.getMessage());
-        }
-
-        return compra;
-    }
 }
