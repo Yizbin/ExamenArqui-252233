@@ -9,7 +9,6 @@ import Entidades.GeneradorMock;
 import Entidades.Producto;
 import Entidades.Tarjeta;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,11 +24,13 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
     private String mensajeEstado;
     private String errorEstado;
     private final List<ISuscriptor> listaSuscriptores;
+    private final List<ISuscriptorPago> listaSuscriptoresPago;
 
     public ModeloCompra() {
         this.productosDisponibles = new ArrayList<>();
         this.productosSeleccionados = new ArrayList<>();
         this.listaSuscriptores = new ArrayList<>();
+        this.listaSuscriptoresPago = new ArrayList<>();
         this.total = 0.0;
         obtenerProductos();
     }
@@ -48,12 +49,15 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
     public void agregarSuscriptor(ISuscriptor suscriptor) {
         listaSuscriptores.add(suscriptor);
     }
+    
+    public void agregarSuscriptorPago(ISuscriptorPago suscriptorPago) {
+        listaSuscriptoresPago.add(suscriptorPago);
+    }
 
     private void notificarSuscriptores() {
         for (ISuscriptor suscriptor : listaSuscriptores) {
             suscriptor.update();
         }
-        limpiarMensajes();
     }
 
     @Override
@@ -147,52 +151,28 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
     }
 
     @Override
-    public String getMensajeEstado() {
-        return mensajeEstado;
-    }
-
-    @Override
-    public String getErrorEstado() {
-        return errorEstado;
-    }
-
-    @Override
-    public void limpiarMensajes() {
-        this.errorEstado = null;
-        this.mensajeEstado = null;
-    }
-
-    @Override
-    public void procesarCompraCompleta(String numeroTarjeta) {
+    public void procesarCompraCompleta(String numeroTarjeta) throws Exception {
         if (productosSeleccionados.isEmpty()) {
-            this.errorEstado = "El carrito esta vacio. Agrega productos para pagar.";
-            this.mensajeEstado = null;
-            notificarSuscriptores();
-            return;
+            throw new Exception("El carrito esta vacio. Agrega productos para pagar.");
         }
 
-        try {
-            String numLimpio = numeroTarjeta.replace("-", "").replace(" ", "");
+        String numLimpio = numeroTarjeta.replace("-", "").replace(" ", "");
 
-            Tarjeta nuevaTarjeta = new Tarjeta(numLimpio, "Banamex", "Ciudad Obregón");
-            nuevaTarjeta.validar();
+        Tarjeta nuevaTarjeta = new Tarjeta(numLimpio, "Banamex", "Ciudad Obregón");
+        nuevaTarjeta.validar();
 
-            List<String> tarjetasValidas = Arrays.asList("1234567890123456", "4152313456789012");
-            if (!tarjetasValidas.contains(numLimpio)) {
-                throw new Exception("Tarjeta declinada o inexistente en el sistema.");
-            }
-
-            this.tarjetaActual = nuevaTarjeta;
-            this.mensajeEstado = "¡Pago procesado con éxito por un total de $" + this.total + "!";
-            this.errorEstado = null;
-
-        } catch (Exception e) {
-            this.tarjetaActual = null;
-            this.errorEstado = e.getMessage();
-            this.mensajeEstado = null;
+        java.util.List<String> tarjetasValidas = java.util.Arrays.asList("1234567890123456", "4152313456789012");
+        if (!tarjetasValidas.contains(numLimpio)) {
+            throw new Exception("Tarjeta declinada o inexistente en el sistema.");
         }
 
-        notificarSuscriptores();
+        this.tarjetaActual = nuevaTarjeta;
+
+        notificarSuscriptores(); 
+
+        for (ISuscriptorPago suscriptor : listaSuscriptoresPago) {
+            suscriptor.compraExitosa();
+        }
     }
 
     private Producto buscarProductoPorId(int idProducto) throws Exception {

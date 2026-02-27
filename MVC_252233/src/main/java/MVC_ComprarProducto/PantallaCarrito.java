@@ -214,20 +214,30 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
     public void clickAgregarProducto(int idProducto, int cantidad) {
         try {
             controlador.seleccionarProducto(idProducto, cantidad);
+            mostrarMensaje("Añadido", "Producto agregado al carrito", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
             mostrarMensaje("Error al agregar", e.getMessage(), JOptionPane.ERROR_MESSAGE);
         }
     }
 
     public void clickEliminarProducto(int idProducto) {
-        controlador.eliminarProducto(idProducto);
+        try {
+            controlador.eliminarProducto(idProducto);
+        } catch (Exception e) {
+            mostrarMensaje("Error", e.getMessage(), JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void clickPagar() {
         String numTarjeta = pedirTexto("Ingresar Pago", "Por favor, ingrese su numero de tarjeta:");
 
         if (numTarjeta != null && !numTarjeta.trim().isEmpty()) {
-            controlador.procesarCompra(numTarjeta);
+            try {
+                controlador.procesarCompra(numTarjeta);
+                mostrarMensaje("Éxito", "¡Pago procesado con éxito!", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                mostrarMensaje("Error en el pago", e.getMessage(), JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -263,13 +273,6 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
         boolean tieneProductos = !modeloVista.getProductosSeleccionados().isEmpty();
         btnPagar.setEnabled(tieneProductos);
 
-        String error = modeloVista.getErrorEstado();
-        String exito = modeloVista.getMensajeEstado();
-
-        if (error != null) {
-            mostrarMensaje("Error", error, JOptionPane.ERROR_MESSAGE);
-        } else if (exito != null) {
-            mostrarMensaje("Éxito", exito, JOptionPane.INFORMATION_MESSAGE);
-        }
     }
+
 }

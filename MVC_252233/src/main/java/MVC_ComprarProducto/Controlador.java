@@ -16,11 +16,11 @@ public class Controlador {
         this.modelo = modelo;
     }
 
-    public void seleccionarProducto(int idProducto, int cantidad) {
+    public void seleccionarProducto(int idProducto, int cantidad) throws Exception {
         modelo.agregarProducto(idProducto, cantidad);
     }
 
-    public void procesarCompra(String numeroTarjeta) {
+    public void procesarCompra(String numeroTarjeta) throws Exception {
         modelo.procesarCompraCompleta(numeroTarjeta);
     }
 
@@ -28,7 +28,7 @@ public class Controlador {
         modelo.procesarPago();
     }
 
-    public void eliminarProducto(int idProducto) {
+    public void eliminarProducto(int idProducto) throws Exception {
         modelo.eliminarProducto(idProducto);
     }
 }

@@ -18,7 +18,7 @@ import javax.swing.*;
  *
  * @author Abraham Coronel
  */
-public class PantallaTicket extends JFrame implements ISuscriptor {
+public class PantallaTicket extends JFrame implements ISuscriptorPago {
 
     private final Controlador controlador;
     private final IModeloVista modeloVista;
@@ -137,13 +137,8 @@ public class PantallaTicket extends JFrame implements ISuscriptor {
     }
 
     @Override
-    public void update() {
-        String exito = modeloVista.getMensajeEstado();
-
-        if (exito != null && exito.toLowerCase().contains("pago")) {
-            mostrarTicket();
-            setVisible(true);
-        }
+    public void compraExitosa() {
+        mostrarTicket();
+        setVisible(true);
     }
-
 }

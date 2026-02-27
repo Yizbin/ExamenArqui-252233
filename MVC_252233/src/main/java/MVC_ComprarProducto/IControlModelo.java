@@ -10,11 +10,11 @@ package MVC_ComprarProducto;
  */
 public interface IControlModelo {
 
-    public void agregarProducto(int idProducto, int cantidad);
+    public void agregarProducto(int idProducto, int cantidad) throws Exception;
 
-    public void procesarCompraCompleta(String numeroTarjeta);
+    public void procesarCompraCompleta(String numeroTarjeta) throws Exception;
 
     public void procesarPago();
 
-    public void eliminarProducto(int idProducto);
+    public void eliminarProducto(int idProducto) throws Exception;
 }

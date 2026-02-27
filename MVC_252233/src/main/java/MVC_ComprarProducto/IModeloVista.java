@@ -23,9 +23,4 @@ public interface IModeloVista {
 
     public Tarjeta getDatosTarjeta();
 
-    public String getMensajeEstado();
-
-    public String getErrorEstado();
-
-    public void limpiarMensajes();
 }

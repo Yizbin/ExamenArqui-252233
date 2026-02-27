@@ -27,7 +27,7 @@ public class Ensamblador {
         PantallaTicket pantallaTicket = new PantallaTicket(controlador, modelo);
 
         modelo.agregarSuscriptor(pantallaCarrito);
-        modelo.agregarSuscriptor(pantallaTicket);
+        modelo.agregarSuscriptorPago(pantallaTicket);
 
         pantallaCarrito.update();
 
