@@ -28,6 +28,7 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
     private JPanel panelProductos;
     private JPanel panelResumen;
     private JLabel lblTotal;
+    private JButton btnPagar;
 
     public PantallaCarrito(Controlador controlador, IModeloVista modeloVista) {
         this.controlador = controlador;
@@ -74,7 +75,7 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
         lblTotal.setFont(new Font("Arial", Font.BOLD, 18));
         panelTotal.add(lblTotal);
 
-        JButton btnPagar = new JButton("Pagar");
+        btnPagar = new JButton("Pagar");
         btnPagar.setFont(new Font("Arial", Font.BOLD, 14));
         btnPagar.addActionListener(e -> clickPagar());
         panelTotal.add(btnPagar);
@@ -210,18 +211,6 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
         panelResumen.repaint();
     }
 
-    public boolean ingresarTarjeta() {
-        String numTarjeta = pedirTexto("Ingresar Pago", "Por favor, ingrese su numero de tarjeta:");
-
-        if (numTarjeta == null) {
-            return false;
-        }
-
-        controlador.ingresarTarjeta(numTarjeta);
-
-        return true;
-    }
-
     public void clickAgregarProducto(int idProducto, int cantidad) {
         try {
             controlador.seleccionarProducto(idProducto, cantidad);
@@ -229,27 +218,16 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
             mostrarMensaje("Error al agregar", e.getMessage(), JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     public void clickEliminarProducto(int idProducto) {
-        controlador.eliminarProducto(idProducto); 
+        controlador.eliminarProducto(idProducto);
     }
 
     public void clickPagar() {
-        if (modeloVista.getProductosSeleccionados().isEmpty()) {
-            mostrarMensaje("Carrito vacio", "Agrega productos antes de pagar.", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
         String numTarjeta = pedirTexto("Ingresar Pago", "Por favor, ingrese su numero de tarjeta:");
 
-        if (numTarjeta == null) {
-            return;
-        }
-
-        controlador.ingresarTarjeta(numTarjeta);
-
-        if (modeloVista.getDatosTarjeta() != null) {
-            controlador.pagar();
+        if (numTarjeta != null && !numTarjeta.trim().isEmpty()) {
+            controlador.procesarCompra(numTarjeta);
         }
     }
 
@@ -281,6 +259,9 @@ public class PantallaCarrito extends JFrame implements ISuscriptor {
     public void update() {
         mostrarProductos();
         mostrarSeleccionados();
+
+        boolean tieneProductos = !modeloVista.getProductosSeleccionados().isEmpty();
+        btnPagar.setEnabled(tieneProductos);
 
         String error = modeloVista.getErrorEstado();
         String exito = modeloVista.getMensajeEstado();

@@ -9,6 +9,7 @@ import Entidades.GeneradorMock;
 import Entidades.Producto;
 import Entidades.Tarjeta;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -73,32 +74,6 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
             this.mensajeEstado = "Producto agregado: " + productoEncontrado.getNombre();
 
         } catch (Exception e) {
-            this.errorEstado = e.getMessage();
-            this.mensajeEstado = null;
-        }
-
-        notificarSuscriptores();
-    }
-
-    @Override
-    public void registrarTarjeta(String numero) {
-        try {
-            String numLimpio = numero.replace("-", "").replace(" ", "");
-
-            Tarjeta nuevaTarjeta = new Tarjeta(numLimpio, "Banamex", "Ciudad Obregón");
-            nuevaTarjeta.validar();
-
-            java.util.List<String> tarjetasValidas = java.util.Arrays.asList("1234567890123456", "4152313456789012");
-            if (!tarjetasValidas.contains(numLimpio)) {
-                throw new Exception("Tarjeta declinada o inexistente en el sistema.");
-            }
-
-            this.tarjetaActual = nuevaTarjeta;
-            this.errorEstado = null;
-            this.mensajeEstado = "Tarjeta registrada correctamente.";
-
-        } catch (Exception e) {
-            this.tarjetaActual = null;
             this.errorEstado = e.getMessage();
             this.mensajeEstado = null;
         }
@@ -185,6 +160,39 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
     public void limpiarMensajes() {
         this.errorEstado = null;
         this.mensajeEstado = null;
+    }
+
+    @Override
+    public void procesarCompraCompleta(String numeroTarjeta) {
+        if (productosSeleccionados.isEmpty()) {
+            this.errorEstado = "El carrito esta vacio. Agrega productos para pagar.";
+            this.mensajeEstado = null;
+            notificarSuscriptores();
+            return;
+        }
+
+        try {
+            String numLimpio = numeroTarjeta.replace("-", "").replace(" ", "");
+
+            Tarjeta nuevaTarjeta = new Tarjeta(numLimpio, "Banamex", "Ciudad Obregón");
+            nuevaTarjeta.validar();
+
+            List<String> tarjetasValidas = Arrays.asList("1234567890123456", "4152313456789012");
+            if (!tarjetasValidas.contains(numLimpio)) {
+                throw new Exception("Tarjeta declinada o inexistente en el sistema.");
+            }
+
+            this.tarjetaActual = nuevaTarjeta;
+            this.mensajeEstado = "¡Pago procesado con éxito por un total de $" + this.total + "!";
+            this.errorEstado = null;
+
+        } catch (Exception e) {
+            this.tarjetaActual = null;
+            this.errorEstado = e.getMessage();
+            this.mensajeEstado = null;
+        }
+
+        notificarSuscriptores();
     }
 
     private Producto buscarProductoPorId(int idProducto) throws Exception {

@@ -12,9 +12,9 @@ public interface IControlModelo {
 
     public void agregarProducto(int idProducto, int cantidad);
 
-    public void registrarTarjeta(String numero);
+    public void procesarCompraCompleta(String numeroTarjeta);
 
     public void procesarPago();
-    
+
     public void eliminarProducto(int idProducto);
 }

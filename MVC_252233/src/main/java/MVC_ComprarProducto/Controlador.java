@@ -20,8 +20,8 @@ public class Controlador {
         modelo.agregarProducto(idProducto, cantidad);
     }
 
-    public void ingresarTarjeta(String numero) {
-        modelo.registrarTarjeta(numero);
+    public void procesarCompra(String numeroTarjeta) {
+        modelo.procesarCompraCompleta(numeroTarjeta);
     }
 
     public void pagar() {
