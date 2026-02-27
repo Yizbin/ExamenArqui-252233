@@ -49,7 +49,7 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
     public void agregarSuscriptor(ISuscriptor suscriptor) {
         listaSuscriptores.add(suscriptor);
     }
-    
+
     public void agregarSuscriptorPago(ISuscriptorPago suscriptorPago) {
         listaSuscriptoresPago.add(suscriptorPago);
     }
@@ -61,26 +61,14 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
     }
 
     @Override
-    public void agregarProducto(int idProducto, int cantidad) {
-        try {
-            Producto productoEncontrado = buscarProductoPorId(idProducto);
-            if (productoEncontrado == null) {
-                throw new Exception("Producto no encontrado.");
-            }
+    public void agregarProducto(int idProducto, int cantidad) throws Exception {
+        Producto productoEncontrado = buscarProductoPorId(idProducto);
 
-            DetalleCompra nuevoDetalle = new DetalleCompra(productoEncontrado, cantidad);
-            nuevoDetalle.validar();
+        DetalleCompra nuevoDetalle = new DetalleCompra(productoEncontrado, cantidad);
+        nuevoDetalle.validar();
 
-            productosSeleccionados.add(nuevoDetalle);
-            calcularTotal();
-
-            this.errorEstado = null;
-            this.mensajeEstado = "Producto agregado: " + productoEncontrado.getNombre();
-
-        } catch (Exception e) {
-            this.errorEstado = e.getMessage();
-            this.mensajeEstado = null;
-        }
+        productosSeleccionados.add(nuevoDetalle);
+        calcularTotal();
 
         notificarSuscriptores();
     }
@@ -102,32 +90,23 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
     }
 
     @Override
-    public void eliminarProducto(int idProducto) {
-        try {
-            DetalleCompra detalleAEliminar = null;
-            for (DetalleCompra detalle : productosSeleccionados) {
-                if (detalle.getProducto().getId() == idProducto) {
-                    detalleAEliminar = detalle;
-                    break;
-                }
+    public void eliminarProducto(int idProducto) throws Exception {
+        DetalleCompra detalleAEliminar = null;
+
+        for (DetalleCompra detalle : productosSeleccionados) {
+            if (detalle.getProducto().getId() == idProducto) {
+                detalleAEliminar = detalle;
+                break;
             }
-
-            if (detalleAEliminar != null) {
-                productosSeleccionados.remove(detalleAEliminar);
-                calcularTotal();
-
-                this.errorEstado = null;
-                this.mensajeEstado = "Producto eliminado del carrito.";
-            } else {
-                throw new Exception("El producto no se encontro en el carrito.");
-            }
-
-        } catch (Exception e) {
-            this.errorEstado = e.getMessage();
-            this.mensajeEstado = null;
         }
+        if (detalleAEliminar != null) {
+            productosSeleccionados.remove(detalleAEliminar);
+            calcularTotal();
 
-        notificarSuscriptores();
+            notificarSuscriptores();
+        } else {
+            throw new Exception("El producto no se encontro en el carrito.");
+        }
     }
 
     @Override
@@ -168,7 +147,7 @@ public class ModeloCompra implements IControlModelo, IModeloVista {
 
         this.tarjetaActual = nuevaTarjeta;
 
-        notificarSuscriptores(); 
+        notificarSuscriptores();
 
         for (ISuscriptorPago suscriptor : listaSuscriptoresPago) {
             suscriptor.compraExitosa();
