@@ -20,14 +20,11 @@ import javax.swing.*;
  */
 public class PantallaTicket extends JFrame implements ISuscriptorPago {
 
-    private final Controlador controlador;
     private final IModeloVista modeloVista;
     private JPanel panelContenido;
 
-    public PantallaTicket(Controlador controlador, IModeloVista modeloVista) {
-        this.controlador = controlador;
+    public PantallaTicket(IModeloVista modeloVista) {
         this.modeloVista = modeloVista;
-
         configurarUI();
     }
 
